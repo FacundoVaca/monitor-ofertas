@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /cargar.html
+Sitemap: https://ofertas.bolsillo.online/sitemap.xml

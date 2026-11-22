@@ -1,0 +1,59 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Cargar ofertas (panel privado)</title><link rel="stylesheet" href="assets/style.css"></head><body>
+<main><div class="wrap">
+<h1>Cargar ofertas</h1>
+<p class="lead">Panel para vos. Todo pasa en tu navegador: al final descargás <code>ofertas.json</code> y lo subís a <code>data/</code> en tu hosting.</p>
+<div class="card">
+ <p><button id="cargar-actual" type="button">1. Cargar las ofertas publicadas</button> <span class="status">o pegá un JSON abajo y tocá “Leer JSON”.</span></p>
+ <form id="f" class="conv">
+  <div><label>Tienda</label><select name="tienda"><option value="mercadolibre">Mercado Libre</option><option value="pedidosya">PedidosYa</option></select></div>
+  <div><label>Categoría</label><input name="categoria" placeholder="Tecnología, Comida, Supermercado…" required></div>
+  <div class="full"><label>Título</label><input name="titulo" required></div>
+  <div><label>Precio actual (opcional en promos)</label><input name="precio" inputmode="numeric"></div>
+  <div><label>Precio anterior (opcional)</label><input name="precio_anterior" inputmode="numeric"></div>
+  <div class="full"><label>Enlace (para Mercado Libre, tu enlace de afiliado)</label><input name="url" type="url" placeholder="https://…" required></div>
+  <div class="full"><label>Imagen (URL https, opcional)</label><input name="imagen" type="url"></div>
+  <div class="full"><label>Ciudades (ids separados por coma, o “todas”)</label><input name="ciudades" value="todas"><small class="status" id="ids"></small></div>
+  <div><label>Vence (opcional)</label><input name="vence" type="date"></div>
+  <div><label>Nota corta (opcional)</label><input name="nota"></div>
+  <input type="hidden" name="id">
+  <div class="full"><button type="submit">Guardar oferta</button> <button type="button" id="limpiar" class="sec" style="background:var(--brand-2);color:var(--brand)">Nueva</button></div>
+ </form>
+</div>
+<div class="card"><h2 style="margin-top:0">Ofertas cargadas</h2><table><thead><tr><th>Oferta</th><th>Precio</th><th></th></tr></thead><tbody id="lista"></tbody></table>
+<p><label style="display:inline"><input type="checkbox" id="sin-ejemplos" style="width:auto"> Borrar las ofertas de ejemplo</label></p>
+<p><button id="descargar" type="button">2. Descargar ofertas.json</button></p></div>
+<div class="card"><label>JSON</label><textarea id="json"></textarea><p><button id="leer" type="button">Leer JSON</button></p></div>
+</div></main>
+<script>
+(function(){
+ var data={actualizado:"",ofertas:[]},f=document.getElementById("f");
+ function num(v){v=(v||"").replace(/\./g,"").replace(",",".").trim();return v?Number(v):undefined}
+ function today(){return new Date().toISOString().slice(0,10)}
+ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function sync(){document.getElementById("json").value=JSON.stringify(data,null,2);
+  document.getElementById("lista").innerHTML=data.ofertas.map(function(o,i){return"<tr><td>"+esc(o.titulo)+"</td><td>"+(o.precio!=null?"$ "+o.precio:"")+'</td><td><a href="#" data-e="'+i+'">Editar</a> · <a href="#" data-d="'+i+'">Borrar</a></td></tr>'}).join("")}
+ fetch("data/ciudades.json").then(function(r){return r.json()}).then(function(c){document.getElementById("ids").textContent="Ids: "+c.map(function(x){return x.id}).join(", ")});
+ document.getElementById("cargar-actual").onclick=function(){fetch("data/ofertas.json",{cache:"no-cache"}).then(function(r){return r.json()}).then(function(d){data=d;sync()})};
+ document.getElementById("leer").onclick=function(){try{data=JSON.parse(document.getElementById("json").value);sync()}catch(e){alert("JSON inválido")}};
+ document.getElementById("limpiar").onclick=function(){f.reset();f.id.value=""};
+ document.getElementById("lista").onclick=function(e){var t=e.target;if(t.dataset.d){e.preventDefault();data.ofertas.splice(+t.dataset.d,1);sync()}
+  if(t.dataset.e){e.preventDefault();var o=data.ofertas[+t.dataset.e];["tienda","categoria","titulo","url","imagen","vence","nota","id"].forEach(function(k){f[k].value=o[k]||""});
+   f.precio.value=o.precio!=null?o.precio:"";f.precio_anterior.value=o.precio_anterior!=null?o.precio_anterior:"";f.ciudades.value=(o.ciudades||["todas"]).join(",");scrollTo(0,0)}};
+ f.onsubmit=function(e){e.preventDefault();
+  var id=f.id.value||("o"+Date.now().toString(36)),old=data.ofertas.filter(function(o){return o.id===id})[0];
+  var o={id:id,tienda:f.tienda.value,titulo:f.titulo.value.trim(),categoria:f.categoria.value.trim(),url:f.url.value.trim(),
+   ciudades:f.ciudades.value.split(",").map(function(s){return s.trim()}).filter(Boolean),agregado:old&&old.agregado||today()};
+  var p=num(f.precio.value),pa=num(f.precio_anterior.value);if(p!=null)o.precio=p;if(pa!=null)o.precio_anterior=pa;
+  ["imagen","vence","nota"].forEach(function(k){if(f[k].value.trim())o[k]=f[k].value.trim()});
+  // Historial: se agrega un punto cada vez que guardás un precio distinto
+  var h=(old&&old.historial)||[];if(p!=null&&(!h.length||h[h.length-1].precio!==p))h.push({fecha:today(),precio:p});if(h.length)o.historial=h.slice(-60);
+  if(old)data.ofertas[data.ofertas.indexOf(old)]=o;else data.ofertas.unshift(o);
+  f.reset();f.id.value="";sync()};
+ document.getElementById("descargar").onclick=function(){
+  if(document.getElementById("sin-ejemplos").checked)data.ofertas=data.ofertas.filter(function(o){return!o.ejemplo});
+  data.actualizado=today();sync();
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.download="ofertas.json";a.click()};
+ sync();
+})();
+</script></body></html>
