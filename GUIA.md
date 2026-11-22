@@ -12,7 +12,27 @@
 - Scrapear la app o la web viola sus términos. No lo usamos.
 - Lo que sí se puede: cargar a mano promos públicas (por ejemplo, promos bancarias o 2x1 que ves en la app o en sus redes), con la ciudad donde valen. Hay un programa de afiliados de PedidosYa por instalación de la app en redes como FlexOffers (tipo "CPE Android AR"), pero hay que aplicar y que te acepten.
 
-**Conclusión:** el sitio es un **monitor curado**: vos cargás las ofertas (5 a 10 minutos por día) y el sitio las filtra por ciudad, calcula el descuento y marca "precio más bajo registrado" con el historial que se va guardando.
+**Conclusión:** Mercado Libre se actualiza **solo** con la API oficial de catálogo (ver abajo). PedidosYa se carga a mano.
+
+## Actualización automática de Mercado Libre
+
+Un proceso de GitHub Actions (`.github/workflows/actualizar-ofertas.yml`) corre todos los días a las 8:00 (hora Argentina):
+1. Pide los **más vendidos** de las categorías de `scripts/config.json` (`/highlights/MLA/category/...`).
+2. Para cada producto consulta el precio más bajo entre vendedores (`/products/{id}/items`) y el precio original si lo hay.
+3. Guarda el precio del día en `public/data/historial-ml.json`.
+4. Publica los que tienen al menos 10% de descuento o están en su precio más bajo registrado (hasta 80).
+5. Hace commit de `ofertas.json` y Cloudflare publica solo. Las ofertas que cargás a mano no se tocan.
+
+**Configuración (una sola vez):**
+1. Entrá a https://developers.mercadolibre.com.ar/devcenter con tu cuenta de Mercado Libre y tocá **Crear aplicación**.
+   - Nombre: Bolsillo Ofertas. URI de redirección: `https://ofertas.bolsillo.online`. Permisos: solo lectura alcanza.
+2. Copiá el **App ID** (Client ID) y la **Clave secreta** (Client Secret).
+3. En GitHub: repo `monitor-ofertas` → *Settings → Secrets and variables → Actions → New repository secret*:
+   - `ML_CLIENT_ID` = App ID
+   - `ML_CLIENT_SECRET` = Clave secreta
+4. Probalo: pestaña *Actions → Actualizar ofertas de Mercado Libre → Run workflow*.
+
+Para cambiar categorías, descuento mínimo o cantidad, editá `scripts/config.json`.
 
 ## Archivos
 

@@ -1,0 +1,8 @@
+{
+  "_ayuda": "Categorías de Mercado Libre Argentina de las que se toman los más vendidos. Podés agregar o sacar ids. Para buscar ids: https://api.mercadolibre.com/sites/MLA/categories",
+  "categorias": ["MLA1051", "MLA1648", "MLA1000", "MLA1144", "MLA5726", "MLA1574", "MLA1276", "MLA1246", "MLA1132", "MLA1039"],
+  "productos_por_categoria": 20,
+  "descuento_minimo": 10,
+  "max_ofertas": 80,
+  "dias_historial": 90
+}

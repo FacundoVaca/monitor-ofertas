@@ -1,0 +1,36 @@
+name: Actualizar ofertas de Mercado Libre
+
+on:
+  schedule:
+    - cron: "0 11 * * *"   # todos los días 8:00 hora Argentina
+  workflow_dispatch: {}     # botón "Run workflow" para correrlo a mano
+
+permissions:
+  contents: write
+
+concurrency:
+  group: actualizar-ofertas
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Traer ofertas de la API oficial
+        env:
+          ML_CLIENT_ID: ${{ secrets.ML_CLIENT_ID }}
+          ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
+        run: node scripts/actualizar-ml.mjs
+      - name: Guardar cambios (Cloudflare publica solo)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/ofertas.json public/data/historial-ml.json
+          if git diff --cached --quiet; then echo "Sin cambios"; exit 0; fi
+          git commit -m "Ofertas actualizadas automáticamente"
+          git push
