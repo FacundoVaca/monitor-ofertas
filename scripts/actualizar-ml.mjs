@@ -63,6 +63,10 @@ function precioDe(prod, items) {
 }
 
 async function main() {
+  if (!process.env.ML_CLIENT_ID || !process.env.ML_CLIENT_SECRET) {
+    console.log("Todavía no están cargados los secretos ML_CLIENT_ID y ML_CLIENT_SECRET: no se actualiza nada.");
+    return;
+  }
   TOKEN = await token();
   const data = await leerJSON(OFERTAS, { ofertas: [] });
   const hist = await leerJSON(HIST, {});
