@@ -46,7 +46,7 @@ footer.site{border-top:1px solid var(--line);background:var(--card);padding:22px
 footer.site a{color:var(--muted);margin-right:14px}
 @media (max-width:600px){form.conv{grid-template-columns:1fr}nav.main a{margin:0 12px 0 0}h1{font-size:1.55rem}}
 /* --- Monitor de ofertas --- */
-.toolbar{display:grid;gap:12px;grid-template-columns:2fr 1fr 1fr 1fr;align-items:end}
+.toolbar{display:grid;gap:12px;grid-template-columns:2fr 1fr 1fr 1fr;align-items:end}.toolbar [hidden]{display:none}
 .loc{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .loc button.sec{background:var(--brand-2);color:var(--brand)}
 .deals{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}

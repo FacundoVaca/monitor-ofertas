@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   var LS_CITY = "mo:ciudad";
-  var state = { ofertas: [], ciudades: [], ciudad: null, q: "", tienda: "", cat: "", orden: "desc", hoy: false, activas: { mercadolibre: true, pedidosya: true } };
+  var state = { ofertas: [], ciudades: [], ciudad: null, q: "", tienda: "", cat: "", orden: "desc", hoy: false, min: 0, activas: { mercadolibre: true, pedidosya: true } };
   var DIAS = ["dom", "lun", "mar", "mie", "jue", "vie", "sab"];
   var DIAS_N = { dom: "domingos", lun: "lunes", mar: "martes", mie: "miércoles", jue: "jueves", vie: "viernes", sab: "sábados" };
 
@@ -14,6 +14,7 @@
   function fmtDate(iso) { var p = (iso || "").split("-"); return p.length === 3 ? p[2] + "/" + p[1] : ""; }
 
   function descuento(o) {
+    if (typeof o.descuento === "number") return o.descuento;
     if (typeof o.precio !== "number" || typeof o.precio_anterior !== "number" || o.precio_anterior <= o.precio) return 0;
     return Math.round((1 - o.precio / o.precio_anterior) * 100);
   }
@@ -55,16 +56,19 @@
     return n.length > 1 ? n.slice(0, -1).join(", ") + " y " + n[n.length - 1] : n[0];
   }
 
-  function visible(o) {
+  function visible(o, base) {
     if (state.activas[o.tienda] === false) return false;
     if (o.vence && o.vence < today()) return false;
     if (state.hoy && o.dias && o.dias.length && o.dias.indexOf(DIAS[new Date().getDay()]) === -1) return false;
     if (state.tienda && o.tienda !== state.tienda) return false;
-    if (state.cat && o.categoria !== state.cat) return false;
+    if (!base) {
+      if (state.cat && o.categoria !== state.cat) return false;
+      if (state.min && descuento(o) < state.min) return false;
+    }
     var cs = o.ciudades || ["todas"];
     if (state.ciudad && cs.indexOf("todas") === -1 && cs.indexOf(state.ciudad) === -1) return false;
-    if (state.q) {
-      var t = (o.titulo + " " + (o.nota || "") + " " + (o.categoria || "")).toLowerCase();
+    if (state.q && !base) {
+      var t = ((o.negocio || "") + " " + o.titulo + " " + (o.nota || "") + " " + (o.categoria || "")).toLowerCase();
       if (t.indexOf(state.q) === -1) return false;
     }
     return true;
@@ -82,7 +86,7 @@
       (d ? '<span class="badge">-' + d + "%</span>" : "") +
       (esMinimo(o) ? '<span class="badge low">Precio más bajo registrado</span>' : "") +
       (o.ejemplo ? '<span class="badge demo">Ejemplo</span>' : "") +
-      "</div><h3>" + esc(o.titulo) + "</h3>" +
+      "</div>" + (o.negocio ? '<div class="meta" style="font-weight:700;color:var(--ink)">' + esc(o.negocio) + "</div>" : "") + "<h3>" + esc(o.titulo) + "</h3>" +
       (typeof o.precio === "number" ? '<div class="price">' + money(o.precio) + (o.precio_anterior > o.precio ? '<span class="old">' + money(o.precio_anterior) + "</span>" : "") + "</div>" : "") +
       (o.medio_pago ? "<div><strong>Pagando con:</strong> " + esc(o.medio_pago) + "</div>" : "") +
       (o.dias && o.dias.length ? "<div><strong>Válida:</strong> " + esc(diasTexto(o.dias)) + "</div>" : "") +
@@ -93,8 +97,21 @@
       "</div></article>";
   }
 
+  function opciones() {
+    // Negocios y descuentos disponibles en la ciudad elegida (sin contar los filtros de texto, categoría y descuento)
+    var base = state.ofertas.filter(function (o) { return visible(o, true); });
+    var neg = {}; base.forEach(function (o) { if (o.negocio) neg[o.negocio] = 1; });
+    $("#negocios").innerHTML = Object.keys(neg).sort().map(function (n) { return '<option value="' + esc(n) + '">'; }).join("");
+    var sel = $("#min"), cur = state.min;
+    sel.innerHTML = [0, 10, 20, 30, 40, 50].map(function (m) {
+      var n = base.filter(function (o) { return descuento(o) >= m; }).length;
+      return '<option value="' + m + '"' + (m === cur ? " selected" : "") + ">" + (m ? m + "% o más (" + n + ")" : "Cualquiera (" + n + ")") + "</option>";
+    }).join("");
+  }
+
   function render() {
     var box = $("#deals"); if (!box) return;
+    opciones();
     var list = state.ofertas.filter(visible);
     list.sort(function (a, b) {
       if (state.orden === "precio") return (a.precio || 0) - (b.precio || 0);
@@ -136,6 +153,7 @@
     $("#orden").addEventListener("change", function (e) { state.orden = e.target.value; render(); });
     $("#ciudad").addEventListener("change", function (e) { setCity(e.target.value, true); });
     $("#btn-loc").addEventListener("click", locate);
+    $("#min").addEventListener("change", function (e) { state.min = +e.target.value; render(); });
     $("#hoy").addEventListener("change", function (e) { state.hoy = e.target.checked; render(); });
     $("#deals").addEventListener("click", function (e) {
       var b = e.target.closest(".copy"); if (!b) return;

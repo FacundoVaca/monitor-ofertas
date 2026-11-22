@@ -14,10 +14,11 @@
  <div class="loc"><button id="btn-loc" class="sec" type="button">📍 Usar mi ubicación</button>
  <span id="loc-status" class="status">Solo si das permiso. Tu ubicación se usa en tu navegador para elegir la ciudad más cercana y no se guarda en ningún servidor.</span></div>
  <div class="toolbar" style="margin-top:14px">
-  <div class="full"><label for="q">Buscar</label><input id="q" type="search" placeholder="Ej: pizza, helado, súper…"></div>
+  <div class="full"><label for="q">Buscar negocio o producto</label><input id="q" type="search" list="negocios" autocomplete="off" placeholder="Ej: nombre del local, pizza, helado…"><datalist id="negocios"></datalist></div>
   <div><label for="ciudad">Ciudad</label><select id="ciudad"></select></div>
   <div id="tienda-box"><label for="tienda">Tienda</label><select id="tienda"><option value="">Todas</option><option value="mercadolibre">Mercado Libre</option><option value="pedidosya">PedidosYa</option></select></div>
   <div><label for="cat">Categoría</label><select id="cat"></select></div>
+  <div><label for="min">Descuento</label><select id="min"></select></div>
  </div>
  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap">
   <span style="display:flex;gap:14px;align-items:center"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hoy" style="width:auto"> Solo válidas hoy</label><span id="count" class="status"></span></span>

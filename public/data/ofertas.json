@@ -50,7 +50,8 @@
         "mar",
         "jue"
       ],
-      "cupon": "EJEMPLO2X1"
+      "cupon": "EJEMPLO2X1",
+      "negocio": "EJEMPLO Hamburguesería"
     },
     {
       "id": "ejemplo-3",
@@ -69,7 +70,9 @@
       "medio_pago": "EJEMPLO – tarjeta de débito del Banco X",
       "dias": [
         "mie"
-      ]
+      ],
+      "negocio": "EJEMPLO Supermercado",
+      "descuento": 30
     }
   ]
 }

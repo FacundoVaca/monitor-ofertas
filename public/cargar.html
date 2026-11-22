@@ -8,6 +8,8 @@
  <form id="f" class="conv">
   <div><label>Tienda</label><select name="tienda"><option value="pedidosya">PedidosYa</option><option value="mercadolibre">Mercado Libre</option></select></div>
   <div><label>Categoría</label><input name="categoria" list="cats" placeholder="Comida, Supermercado…" required><datalist id="cats"><option>Comida</option><option>Supermercado</option><option>Farmacia</option><option>Bebidas</option><option>Helados y postres</option><option>Mascotas</option><option>Kiosco</option><option>Tecnología</option></datalist></div>
+  <div><label>Negocio</label><input name="negocio" placeholder="Nombre del local o cadena"></div>
+  <div><label>% de descuento (si no hay precios)</label><input name="descuento" inputmode="numeric" placeholder="Ej: 30"></div>
   <div class="full"><label>Título</label><input name="titulo" required></div>
   <div><label>Precio actual (opcional en promos)</label><input name="precio" inputmode="numeric"></div>
   <div><label>Precio anterior (opcional)</label><input name="precio_anterior" inputmode="numeric"></div>
@@ -36,20 +38,21 @@
  function today(){return new Date().toISOString().slice(0,10)}
  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
  function sync(){document.getElementById("json").value=JSON.stringify(data,null,2);
-  document.getElementById("lista").innerHTML=data.ofertas.map(function(o,i){return"<tr><td>"+esc(o.titulo)+"</td><td>"+(o.precio!=null?"$ "+o.precio:"")+'</td><td><a href="#" data-e="'+i+'">Editar</a> · <a href="#" data-d="'+i+'">Borrar</a></td></tr>'}).join("")}
+  document.getElementById("lista").innerHTML=data.ofertas.map(function(o,i){return"<tr><td>"+esc(o.titulo)+"</td><td>"+(o.precio!=null?"$ "+o.precio:(o.descuento?o.descuento+"%":""))+'</td><td><a href="#" data-e="'+i+'">Editar</a> · <a href="#" data-d="'+i+'">Borrar</a></td></tr>'}).join("")}
  fetch("data/ciudades.json").then(function(r){return r.json()}).then(function(c){document.getElementById("ids").textContent="Ids: "+c.map(function(x){return x.id}).join(", ")});
  document.getElementById("cargar-actual").onclick=function(){fetch("data/ofertas.json",{cache:"no-cache"}).then(function(r){return r.json()}).then(function(d){data=d;sync()})};
  document.getElementById("leer").onclick=function(){try{data=JSON.parse(document.getElementById("json").value);sync()}catch(e){alert("JSON inválido")}};
  document.getElementById("limpiar").onclick=function(){f.reset();f.id.value=""};
  document.getElementById("lista").onclick=function(e){var t=e.target;if(t.dataset.d){e.preventDefault();data.ofertas.splice(+t.dataset.d,1);sync()}
-  if(t.dataset.e){e.preventDefault();var o=data.ofertas[+t.dataset.e];["tienda","categoria","titulo","url","imagen","vence","nota","id","cupon","medio_pago"].forEach(function(k){f[k].value=o[k]||""});document.querySelectorAll("#dias input").forEach(function(c){c.checked=(o.dias||[]).indexOf(c.value)>-1});
-   f.precio.value=o.precio!=null?o.precio:"";f.precio_anterior.value=o.precio_anterior!=null?o.precio_anterior:"";f.ciudades.value=(o.ciudades||["todas"]).join(",");scrollTo(0,0)}};
+  if(t.dataset.e){e.preventDefault();var o=data.ofertas[+t.dataset.e];["tienda","categoria","titulo","url","imagen","vence","nota","id","cupon","medio_pago","negocio"].forEach(function(k){f[k].value=o[k]||""});document.querySelectorAll("#dias input").forEach(function(c){c.checked=(o.dias||[]).indexOf(c.value)>-1});
+   f.precio.value=o.precio!=null?o.precio:"";f.precio_anterior.value=o.precio_anterior!=null?o.precio_anterior:"";f.descuento.value=o.descuento!=null?o.descuento:"";f.ciudades.value=(o.ciudades||["todas"]).join(",");scrollTo(0,0)}};
  f.onsubmit=function(e){e.preventDefault();
   var id=f.id.value||("o"+Date.now().toString(36)),old=data.ofertas.filter(function(o){return o.id===id})[0];
   var o={id:id,tienda:f.tienda.value,titulo:f.titulo.value.trim(),categoria:f.categoria.value.trim(),url:f.url.value.trim(),
    ciudades:f.ciudades.value.split(",").map(function(s){return s.trim()}).filter(Boolean),agregado:old&&old.agregado||today()};
   var p=num(f.precio.value),pa=num(f.precio_anterior.value);if(p!=null)o.precio=p;if(pa!=null)o.precio_anterior=pa;
-  ["imagen","vence","nota","cupon","medio_pago"].forEach(function(k){if(f[k].value.trim())o[k]=f[k].value.trim()});
+  var dc=num(f.descuento.value);if(dc!=null&&dc>0&&dc<100)o.descuento=Math.round(dc);
+  ["imagen","vence","nota","cupon","medio_pago","negocio"].forEach(function(k){if(f[k].value.trim())o[k]=f[k].value.trim()});
   var dias=[].map.call(document.querySelectorAll("#dias input:checked"),function(c){return c.value});if(dias.length)o.dias=dias;
   if(old&&old.auto)o.auto=false;
   // Historial: se agrega un punto cada vez que guardás un precio distinto
