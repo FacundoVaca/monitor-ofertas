@@ -1,38 +1,34 @@
 <!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="assets/style.css">
 <!-- AdSense: cuando te aprueben, descomentá y poné tu ID de editor
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-<title>Promos y cupones de PedidosYa en tu ciudad | Bolsillo Ofertas</title>
-<meta name="description" content="Promos, cupones y descuentos con tarjeta para PedidosYa, filtrados por tu ciudad y por día de la semana.">
-</head><body><header class="site"><div class="wrap"><a class="logo" href="index.html">Bolsillo<span> Ofertas</span></a><nav class="main"><a href="index.html">Ofertas</a><a href="index.html?tienda=pedidosya">PedidosYa</a><a href="guias.html">Guías</a><a href="acerca.html">Cómo funciona</a></nav></div></header>
+<title>Precios del súper cerca tuyo: compará supermercados | Bolsillo Ofertas</title>
+<meta name="description" content="Compará precios y promos de supermercados cerca tuyo. Datos oficiales de Precios Claros actualizados todos los días.">
+</head><body><body><header class="site"><div class="wrap"><a class="logo" href="index.html">Bolsillo<span> Ofertas</span></a><nav class="main"><a href="index.html">Súper cerca tuyo</a><a href="guias.html">Guías</a><a href="acerca.html">Cómo funciona</a></nav></div></header>
 <main><div class="wrap">
-<h1>Promos de PedidosYa en tu ciudad</h1>
-<p class="lead">Cupones, 2x1 y descuentos con tarjeta o billetera, filtrados por tu ciudad y por día. Las ofertas de Mercado Libre llegan pronto. <span id="updated" class="status"></span></p>
-<p id="ml-notice" class="notice" hidden>Las ofertas de Mercado Libre están deshabilitadas por ahora. Vuelven pronto.</p>
-<p id="demo-notice" class="notice" hidden>Estas son ofertas de ejemplo. Reemplazalas por ofertas reales antes de publicar el sitio.</p>
-
+<h1>Precios del súper cerca tuyo</h1>
+<p class="lead">Compará precios y promos de los supermercados de tu zona. Se actualiza todos los días con los precios que los supermercados informan oficialmente.</p>
 <div class="card">
  <div class="loc"><button id="btn-loc" class="sec" type="button">📍 Usar mi ubicación</button>
- <span id="loc-status" class="status">Solo si das permiso. Tu ubicación se usa en tu navegador para elegir la ciudad más cercana y no se guarda en ningún servidor.</span></div>
+ <span class="status">Solo si das permiso. Se usa en tu navegador para buscar sucursales cercanas y no se envía a ningún servidor.</span></div>
  <div class="toolbar" style="margin-top:14px">
-  <div class="full"><label for="q">Buscar negocio o producto</label><input id="q" type="search" list="negocios" autocomplete="off" placeholder="Ej: nombre del local, pizza, helado…"><datalist id="negocios"></datalist></div>
-  <div><label for="ciudad">Ciudad</label><select id="ciudad"></select></div>
-  <div id="tienda-box"><label for="tienda">Tienda</label><select id="tienda"><option value="">Todas</option><option value="mercadolibre">Mercado Libre</option><option value="pedidosya">PedidosYa</option></select></div>
-  <div><label for="cat">Categoría</label><select id="cat"></select></div>
+  <div><label for="ciudad">Ciudad</label><select id="ciudad"><option>Cargando…</option></select></div>
+  <div><label for="radio">Distancia</label><select id="radio"><option value="2">Hasta 2 km</option><option value="5" selected>Hasta 5 km</option><option value="10">Hasta 10 km</option><option value="20">Hasta 20 km</option></select></div>
+  <div><label for="cadena">Supermercado</label><select id="cadena"><option value="">Todas las cadenas</option></select></div>
   <div><label for="min">Descuento</label><select id="min"></select></div>
+  <div class="span2"><label for="q">Buscar producto o marca</label><input id="q" type="search" placeholder="Ej: leche, yerba, aceite girasol…"></div>
+  <div class="span2"><label for="orden">Ordenar</label><select id="orden"><option value="desc">Mayor descuento</option><option value="precio">Menor precio</option><option value="suc">En más sucursales</option></select></div>
  </div>
- <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap">
-  <span style="display:flex;gap:14px;align-items:center"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hoy" style="width:auto"> Solo válidas hoy</label><span id="count" class="status"></span></span>
-  <label style="display:flex;gap:8px;align-items:center;margin:0">Ordenar <select id="orden" style="width:auto"><option value="desc">Mayor descuento</option><option value="precio">Menor precio</option><option value="nuevo">Más nuevas</option></select></label>
- </div>
+ <p id="st" class="status" style="margin:12px 0 0">Cargando…</p>
+ <span id="count" class="status"></span>
 </div>
-
 <div class="ad-slot"><!-- Bloque de anuncio AdSense --></div>
-<section id="deals" class="deals" aria-live="polite"><p class="empty">Cargando ofertas…</p></section>
+<section id="res" class="deals" aria-live="polite"></section>
+<p style="text-align:center;margin-top:16px"><button id="mas" type="button" hidden>Ver más productos</button></p>
 <div class="ad-slot"><!-- Bloque de anuncio AdSense --></div>
-
-<h2>¿Cómo elegimos las promos?</h2>
-<p>Las promos de PedidosYa cambian según la zona y el día. Las revisamos y cargamos a mano, indicando en qué ciudades valen, qué días, con qué medio de pago y hasta cuándo. Las vencidas se ocultan solas. Siempre confirmá las condiciones en la app antes de pedir.</p>
+<h2>¿De dónde salen estos precios?</h2>
+<p>De <strong>Precios Claros – Base SEPA</strong>, el sistema de la Secretaría de Comercio de la Nación donde los supermercados informan cada día los precios y promociones de cada sucursal. Es información pública y abierta. Nosotros la procesamos todas las noches y te mostramos lo que hay cerca tuyo.</p>
+<p class="disclaimer">Los precios son los informados por cada comercio y pueden diferir del precio en góndola o tener condiciones (por ejemplo, promos llevando 2 o con un medio de pago). Verificá siempre en la sucursal. Fuente: Precios Claros – Base SEPA, Secretaría de Comercio, datos abiertos.</p>
 <p><a href="guias.html">Leé nuestras guías para ahorrar →</a></p>
 </div></main>
-<footer class="site"><div class="wrap"><p><a href="acerca.html">Cómo funciona</a><a href="privacidad.html">Privacidad</a><a href="mailto:contacto@bolsillo.online">Contacto</a></p><p class="disclaimer">Bolsillo Ofertas es un sitio independiente. No está afiliado, patrocinado ni respaldado por Mercado Libre ni por PedidosYa; los nombres se usan solo para identificar dónde está cada oferta. Algunos enlaces son de afiliado: si comprás a través de ellos podemos recibir una comisión, sin costo extra para vos. Precios y promociones pueden cambiar; verificá siempre en el sitio de la tienda antes de comprar.</p></div></footer>
-<script src="assets/app.js"></script></body></html>
+<footer class="site"><div class="wrap"><p><a href="acerca.html">Cómo funciona</a><a href="privacidad.html">Privacidad</a><a href="mailto:contacto@bolsillo.online">Contacto</a></p><p class="disclaimer">Bolsillo Ofertas es un sitio independiente. No está afiliado, patrocinado ni respaldado por los supermercados ni por las tiendas que menciona; los nombres se usan solo para identificar dónde está cada precio u oferta. Algunos enlaces pueden ser de afiliado: si comprás a través de ellos podemos recibir una comisión, sin costo extra para vos. Precios y promociones pueden cambiar; verificá siempre en el sitio de la tienda antes de comprar.</p></div></footer>
+<script src="assets/super.js"></script></body></html>

@@ -81,3 +81,11 @@ En `public/data/config.json` cambiá `"mercadolibre": false` a `true` para volve
 ## Campos extra de las promos de PedidosYa
 
 En el panel de carga podés poner **cupón** (se muestra con botón "Copiar"), **medio de pago** y **días en que vale**. En el sitio, la casilla "Solo válidas hoy" filtra por día.
+
+## Súper cerca tuyo (automático, página principal)
+
+- Fuente: **Precios Claros – Base SEPA** (datos abiertos de la Secretaría de Comercio): precios y promos por sucursal, publicados todos los días.
+- `.github/workflows/actualizar-super.yml` corre todos los días a las 20:30 (hora Argentina): descarga la base, la procesa con `scripts/sepa.mjs` y publica los archivos por zona en la rama **`datos`** del repo (se reemplaza cada día, no ocupa espacio de más).
+- La página `index.html` descarga solo la zona del visitante desde `raw.githubusercontent.com` y calcula distancias en su navegador.
+- No necesita claves ni secretos. Para correrlo a mano: *Actions → Actualizar precios de supermercados (SEPA) → Run workflow*.
+- La página de promos manuales quedó en `ofertas.html` (oculta del menú y de Google por ahora).

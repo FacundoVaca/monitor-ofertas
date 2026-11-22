@@ -68,3 +68,9 @@ footer.site a{color:var(--muted);margin-right:14px}
 .empty{color:var(--muted);text-align:center;padding:30px}
 textarea{width:100%;min-height:220px;font-family:ui-monospace,monospace;font-size:.85rem;padding:10px;border:1px solid var(--line);border-radius:10px}
 @media (max-width:700px){.toolbar{grid-template-columns:1fr 1fr}.toolbar .full{grid-column:1/-1}}
+details summary{cursor:pointer;color:var(--brand);font-weight:600;font-size:.9rem;margin-top:6px}
+details table{font-size:.85rem;margin-top:6px}
+details td{padding:6px 4px;vertical-align:top}
+.deal .old{display:inline}
+small.old{margin-left:0;font-size:.8rem}
+.toolbar .span2{grid-column:span 2}
