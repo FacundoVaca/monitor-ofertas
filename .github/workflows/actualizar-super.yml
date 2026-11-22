@@ -25,7 +25,7 @@ jobs:
         run: |
           URL=$(node scripts/sepa-url.mjs)
           echo "Descargando $URL"
-          curl -fL --retry 3 -o /tmp/sepa.zip "$URL"
+          curl -fL --retry 3 -A "BolsilloOfertas/1.0 (+https://ofertas.bolsillo.online)" -o /tmp/sepa.zip "$URL"
           ls -lh /tmp/sepa.zip
       - name: Descomprimir (zip de zips)
         run: |
