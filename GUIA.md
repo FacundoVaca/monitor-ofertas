@@ -73,3 +73,11 @@ Para cambiar categorías, descuento mínimo o cantidad, editá `scripts/config.j
 - El pie dice que el sitio es independiente y que hay enlaces de afiliado. No lo saques.
 - No uses los logos de Mercado Libre ni de PedidosYa, solo los nombres en texto.
 - Poné solo precios que viste vos y la fecha; no inventes "precios anteriores".
+
+## Activar o desactivar Mercado Libre
+
+En `public/data/config.json` cambiá `"mercadolibre": false` a `true` para volver a mostrar sus ofertas (cuando tengas la app aprobada y los secretos cargados). Mientras esté en `false`, el sitio se enfoca en PedidosYa.
+
+## Campos extra de las promos de PedidosYa
+
+En el panel de carga podés poner **cupón** (se muestra con botón "Copiar"), **medio de pago** y **días en que vale**. En el sitio, la casilla "Solo válidas hoy" filtra por día.

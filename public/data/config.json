@@ -1,0 +1,4 @@
+{
+  "_ayuda": "Poné true/false para mostrar u ocultar cada tienda en el sitio.",
+  "tiendas": { "mercadolibre": false, "pedidosya": true }
+}

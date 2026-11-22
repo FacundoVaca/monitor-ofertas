@@ -8,11 +8,26 @@
       "titulo": "EJEMPLO – Auriculares inalámbricos (reemplazá por un producto real)",
       "precio": 25000,
       "precio_anterior": 38000,
-      "historial": [{"fecha":"2026-11-01","precio":38000},{"fecha":"2026-11-15","precio":31000},{"fecha":"2026-11-22","precio":25000}],
+      "historial": [
+        {
+          "fecha": "2026-11-01",
+          "precio": 38000
+        },
+        {
+          "fecha": "2026-11-15",
+          "precio": 31000
+        },
+        {
+          "fecha": "2026-11-22",
+          "precio": 25000
+        }
+      ],
       "url": "https://www.mercadolibre.com.ar/",
       "imagen": "",
       "categoria": "Tecnología",
-      "ciudades": ["todas"],
+      "ciudades": [
+        "todas"
+      ],
       "vence": "2026-12-31",
       "nota": "Envío a todo el país."
     },
@@ -26,9 +41,16 @@
       "url": "https://www.pedidosya.com.ar/",
       "imagen": "",
       "categoria": "Comida",
-      "ciudades": ["cordoba"],
+      "ciudades": [
+        "cordoba"
+      ],
       "vence": "2026-11-30",
-      "nota": "Solo en Córdoba capital."
+      "nota": "Solo en Córdoba capital.",
+      "dias": [
+        "mar",
+        "jue"
+      ],
+      "cupon": "EJEMPLO2X1"
     },
     {
       "id": "ejemplo-3",
@@ -37,9 +59,17 @@
       "titulo": "EJEMPLO – 30% off en súper con tarjeta X (reemplazá por una promo real)",
       "url": "https://www.pedidosya.com.ar/",
       "categoria": "Supermercado",
-      "ciudades": ["caba","gba","la-plata"],
+      "ciudades": [
+        "caba",
+        "gba",
+        "la-plata"
+      ],
       "vence": "2026-12-15",
-      "nota": "Tope de reintegro según banco."
+      "nota": "Tope de reintegro según banco.",
+      "medio_pago": "EJEMPLO – tarjeta de débito del Banco X",
+      "dias": [
+        "mie"
+      ]
     }
   ]
 }

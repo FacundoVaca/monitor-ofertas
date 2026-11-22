@@ -1,25 +1,26 @@
 <!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="assets/style.css">
 <!-- AdSense: cuando te aprueben, descomentá y poné tu ID de editor
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-<title>Ofertas de Mercado Libre y PedidosYa cerca tuyo | Bolsillo Ofertas</title>
-<meta name="description" content="Ofertas y bajas de precio de Mercado Libre y promociones de PedidosYa en tu ciudad, revisadas a mano y actualizadas seguido.">
-</head><body><header class="site"><div class="wrap"><a class="logo" href="index.html">Bolsillo<span> Ofertas</span></a><nav class="main"><a href="index.html">Ofertas</a><a href="index.html?tienda=mercadolibre">Mercado Libre</a><a href="index.html?tienda=pedidosya">PedidosYa</a><a href="guias.html">Guías</a><a href="acerca.html">Cómo funciona</a></nav></div></header>
+<title>Promos y cupones de PedidosYa en tu ciudad | Bolsillo Ofertas</title>
+<meta name="description" content="Promos, cupones y descuentos con tarjeta para PedidosYa, filtrados por tu ciudad y por día de la semana.">
+</head><body><header class="site"><div class="wrap"><a class="logo" href="index.html">Bolsillo<span> Ofertas</span></a><nav class="main"><a href="index.html">Ofertas</a><a href="index.html?tienda=pedidosya">PedidosYa</a><a href="guias.html">Guías</a><a href="acerca.html">Cómo funciona</a></nav></div></header>
 <main><div class="wrap">
-<h1>Ofertas de Mercado Libre y PedidosYa en tu ciudad</h1>
-<p class="lead">Bajas de precio en los más vendidos de Mercado Libre, actualizadas todos los días, y promos de PedidosYa según tu ciudad. <span id="updated" class="status"></span></p>
+<h1>Promos de PedidosYa en tu ciudad</h1>
+<p class="lead">Cupones, 2x1 y descuentos con tarjeta o billetera, filtrados por tu ciudad y por día. Las ofertas de Mercado Libre llegan pronto. <span id="updated" class="status"></span></p>
+<p id="ml-notice" class="notice" hidden>Las ofertas de Mercado Libre están deshabilitadas por ahora. Vuelven pronto.</p>
 <p id="demo-notice" class="notice" hidden>Estas son ofertas de ejemplo. Reemplazalas por ofertas reales antes de publicar el sitio.</p>
 
 <div class="card">
  <div class="loc"><button id="btn-loc" class="sec" type="button">📍 Usar mi ubicación</button>
  <span id="loc-status" class="status">Solo si das permiso. Tu ubicación se usa en tu navegador para elegir la ciudad más cercana y no se guarda en ningún servidor.</span></div>
  <div class="toolbar" style="margin-top:14px">
-  <div class="full"><label for="q">Buscar</label><input id="q" type="search" placeholder="Ej: auriculares, pizza, súper…"></div>
+  <div class="full"><label for="q">Buscar</label><input id="q" type="search" placeholder="Ej: pizza, helado, súper…"></div>
   <div><label for="ciudad">Ciudad</label><select id="ciudad"></select></div>
-  <div><label for="tienda">Tienda</label><select id="tienda"><option value="">Todas</option><option value="mercadolibre">Mercado Libre</option><option value="pedidosya">PedidosYa</option></select></div>
+  <div id="tienda-box"><label for="tienda">Tienda</label><select id="tienda"><option value="">Todas</option><option value="mercadolibre">Mercado Libre</option><option value="pedidosya">PedidosYa</option></select></div>
   <div><label for="cat">Categoría</label><select id="cat"></select></div>
  </div>
  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap">
-  <span id="count" class="status"></span>
+  <span style="display:flex;gap:14px;align-items:center"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hoy" style="width:auto"> Solo válidas hoy</label><span id="count" class="status"></span></span>
   <label style="display:flex;gap:8px;align-items:center;margin:0">Ordenar <select id="orden" style="width:auto"><option value="desc">Mayor descuento</option><option value="precio">Menor precio</option><option value="nuevo">Más nuevas</option></select></label>
  </div>
 </div>
@@ -28,8 +29,8 @@
 <section id="deals" class="deals" aria-live="polite"><p class="empty">Cargando ofertas…</p></section>
 <div class="ad-slot"><!-- Bloque de anuncio AdSense --></div>
 
-<h2>¿Cómo elegimos las ofertas?</h2>
-<p>Todos los días consultamos los productos más vendidos de Mercado Libre y guardamos su precio. Mostramos los que bajaron respecto de su precio anterior o de los últimos 30 días, y marcamos <strong>“Precio más bajo registrado”</strong> cuando el precio actual es el más bajo que registramos. Las promos de PedidosYa cambian según la zona y las cargamos a mano, indicando en qué ciudades valen.</p>
+<h2>¿Cómo elegimos las promos?</h2>
+<p>Las promos de PedidosYa cambian según la zona y el día. Las revisamos y cargamos a mano, indicando en qué ciudades valen, qué días, con qué medio de pago y hasta cuándo. Las vencidas se ocultan solas. Siempre confirmá las condiciones en la app antes de pedir.</p>
 <p><a href="guias.html">Leé nuestras guías para ahorrar →</a></p>
 </div></main>
 <footer class="site"><div class="wrap"><p><a href="acerca.html">Cómo funciona</a><a href="privacidad.html">Privacidad</a><a href="mailto:contacto@bolsillo.online">Contacto</a></p><p class="disclaimer">Bolsillo Ofertas es un sitio independiente. No está afiliado, patrocinado ni respaldado por Mercado Libre ni por PedidosYa; los nombres se usan solo para identificar dónde está cada oferta. Algunos enlaces son de afiliado: si comprás a través de ellos podemos recibir una comisión, sin costo extra para vos. Precios y promociones pueden cambiar; verificá siempre en el sitio de la tienda antes de comprar.</p></div></footer>

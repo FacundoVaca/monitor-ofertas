@@ -2,7 +2,9 @@
 (function () {
   "use strict";
   var LS_CITY = "mo:ciudad";
-  var state = { ofertas: [], ciudades: [], ciudad: null, q: "", tienda: "", cat: "", orden: "desc" };
+  var state = { ofertas: [], ciudades: [], ciudad: null, q: "", tienda: "", cat: "", orden: "desc", hoy: false, activas: { mercadolibre: true, pedidosya: true } };
+  var DIAS = ["dom", "lun", "mar", "mie", "jue", "vie", "sab"];
+  var DIAS_N = { dom: "domingos", lun: "lunes", mar: "martes", mie: "miércoles", jue: "jueves", vie: "viernes", sab: "sábados" };
 
   function $(s, el) { return (el || document).querySelector(s); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -47,8 +49,16 @@
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 3600000 });
   }
 
+  function diasTexto(d) {
+    if (!d || !d.length) return "";
+    var n = d.map(function (x) { return DIAS_N[x] || x; });
+    return n.length > 1 ? n.slice(0, -1).join(", ") + " y " + n[n.length - 1] : n[0];
+  }
+
   function visible(o) {
+    if (state.activas[o.tienda] === false) return false;
     if (o.vence && o.vence < today()) return false;
+    if (state.hoy && o.dias && o.dias.length && o.dias.indexOf(DIAS[new Date().getDay()]) === -1) return false;
     if (state.tienda && o.tienda !== state.tienda) return false;
     if (state.cat && o.categoria !== state.cat) return false;
     var cs = o.ciudades || ["todas"];
@@ -74,6 +84,9 @@
       (o.ejemplo ? '<span class="badge demo">Ejemplo</span>' : "") +
       "</div><h3>" + esc(o.titulo) + "</h3>" +
       (typeof o.precio === "number" ? '<div class="price">' + money(o.precio) + (o.precio_anterior > o.precio ? '<span class="old">' + money(o.precio_anterior) + "</span>" : "") + "</div>" : "") +
+      (o.medio_pago ? "<div><strong>Pagando con:</strong> " + esc(o.medio_pago) + "</div>" : "") +
+      (o.dias && o.dias.length ? "<div><strong>Válida:</strong> " + esc(diasTexto(o.dias)) + "</div>" : "") +
+      (o.cupon ? '<div><strong>Cupón:</strong> <code>' + esc(o.cupon) + '</code> <button type="button" class="copy" data-c="' + esc(o.cupon) + '" style="padding:3px 8px;font-size:.8rem">Copiar</button></div>' : "") +
       (o.nota ? "<div>" + esc(o.nota) + "</div>" : "") +
       '<div class="meta">' + esc(lugar) + (o.vence ? " · Vence " + fmtDate(o.vence) : "") + "</div>" +
       '<a class="go" href="' + esc(safeUrl(o.url)) + '" target="_blank" rel="sponsored noopener">Ver oferta en ' + tiendaN + "</a>" +
@@ -90,23 +103,30 @@
     });
     box.innerHTML = list.length ? list.map(card).join("") : '<p class="empty">No hay ofertas con estos filtros' + (state.ciudad ? " para tu ciudad" : "") + ". Probá con otra categoría o ciudad.</p>";
     $("#count").textContent = list.length + (list.length === 1 ? " oferta" : " ofertas");
-    var demo = $("#demo-notice"); if (demo) demo.hidden = !state.ofertas.some(function (o) { return o.ejemplo; });
+    var demo = $("#demo-notice"); if (demo) demo.hidden = !state.ofertas.some(function (o) { return o.ejemplo && state.activas[o.tienda] !== false; });
   }
 
   function load(url) { return fetch(url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
 
   function init() {
     if (!$("#deals")) return;
-    Promise.all([load("data/ofertas.json"), load("data/ciudades.json")]).then(function (res) {
+    Promise.all([load("data/ofertas.json"), load("data/ciudades.json"), load("data/config.json").catch(function () { return {}; })]).then(function (res) {
       state.ofertas = res[0].ofertas || []; state.ciudades = res[1] || [];
+      if (res[2] && res[2].tiendas) state.activas = res[2].tiendas;
+      var on = Object.keys(state.activas).filter(function (k) { return state.activas[k]; });
+      if (on.length < 2) $("#tienda-box").hidden = true;
+      Array.prototype.forEach.call($("#tienda").options, function (op) { if (op.value && !state.activas[op.value]) op.remove(); });
       $("#updated").textContent = res[0].actualizado ? "Actualizado: " + res[0].actualizado.split("-").reverse().join("/") : "";
       var sel = $("#ciudad");
       sel.innerHTML = '<option value="">Todas las ciudades</option>' + state.ciudades.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.nombre) + "</option>"; }).join("");
-      var cats = {}; state.ofertas.forEach(function (o) { if (o.categoria) cats[o.categoria] = 1; });
+      var cats = {}; state.ofertas.forEach(function (o) { if (o.categoria && state.activas[o.tienda] !== false) cats[o.categoria] = 1; });
       $("#cat").innerHTML = '<option value="">Todas</option>' + Object.keys(cats).sort().map(function (c) { return '<option>' + esc(c) + "</option>"; }).join("");
       var saved = null; try { saved = localStorage.getItem(LS_CITY); } catch (e) {}
       var p = new URLSearchParams(location.search);
-      if (p.get("tienda")) { state.tienda = p.get("tienda"); $("#tienda").value = state.tienda; }
+      if (p.get("tienda")) {
+        if (state.activas[p.get("tienda")] === false) $("#ml-notice").hidden = false;
+        else { state.tienda = p.get("tienda"); $("#tienda").value = state.tienda; }
+      }
       setCity(p.get("ciudad") || saved, false);
     }).catch(function () { $("#deals").innerHTML = '<p class="empty">No pudimos cargar las ofertas. Recargá la página.</p>'; });
 
@@ -116,6 +136,12 @@
     $("#orden").addEventListener("change", function (e) { state.orden = e.target.value; render(); });
     $("#ciudad").addEventListener("change", function (e) { setCity(e.target.value, true); });
     $("#btn-loc").addEventListener("click", locate);
+    $("#hoy").addEventListener("change", function (e) { state.hoy = e.target.checked; render(); });
+    $("#deals").addEventListener("click", function (e) {
+      var b = e.target.closest(".copy"); if (!b) return;
+      var done = function () { b.textContent = "¡Copiado!"; setTimeout(function () { b.textContent = "Copiar"; }, 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.c).then(done, function () {}); 
+    });
   }
   document.addEventListener("DOMContentLoaded", init);
 })();
