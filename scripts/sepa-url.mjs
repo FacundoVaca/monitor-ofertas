@@ -3,8 +3,8 @@ const UA = "BolsilloOfertas/1.0 (+https://ofertas.bolsillo.online)";
 const H = { "user-agent": UA, accept: "application/json, text/html;q=0.9, */*;q=0.8", "accept-language": "es-AR,es;q=0.9" };
 const t = (x) => Date.parse(x.last_modified || x.metadata_modified || x.created || 0) || 0;
 
-async function porApi() {
-  const r = await fetch("https://datos.produccion.gob.ar/api/3/action/package_show?id=sepa-precios", { headers: H });
+async function porApi(api) {
+  const r = await fetch(api, { headers: H });
   if (!r.ok) throw new Error("API CKAN HTTP " + r.status + " " + (await r.text()).slice(0, 200).replace(/\s+/g, " "));
   const zips = ((await r.json()).result.resources || []).filter((x) => /\.zip($|\?)/i.test(x.url || ""));
   zips.sort((a, b) => t(b) - t(a));
@@ -22,7 +22,10 @@ async function porPagina() {
   return urls[0];
 }
 let url = null;
-try { url = await porApi(); } catch (e) { console.error(e.message); }
+for (const api of ["https://datos.produccion.gob.ar/api/3/action/package_show?id=sepa-precios", "https://datos.gob.ar/api/3/action/package_show?id=produccion-precios-claros---base-sepa"]) {
+  if (url) break;
+  try { url = await porApi(api); } catch (e) { console.error(api.split("/")[2] + ": " + e.message); }
+}
 if (!url) { try { url = await porPagina(); } catch (e) { console.error(e.message); } }
 if (!url) process.exit(1);
 console.log(url);
